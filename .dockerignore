@@ -1,0 +1,47 @@
+ 
+*.pyc
+*.pyo
+*.mo
+*.db
+*.css.map
+*.egg-info
+*.sql.gz
+.cache
+.project
+.idea
+.pydevproject
+.idea/workspace.xml
+.DS_Store
+.git/
+.sass-cache
+.vagrant/
+__pycache__
+dist
+docs
+env
+logs
+src/resa/settings/local.py
+src/node_modules
+web/media
+web/static/CACHE
+stats
+Dockerfile
+docker-compose.yml
+ **/__pycache__
+ **/*.pyc
+ **/*.pyo
+ **/node_modules
+ node_modules
+ db.sqlite3
+keys
+logs
+data
+build
+coverage.xml
+ **/coverage.xml
+pylint.*
+ **/pylint.log
+ **/Jenkinsfile
+**/ansible
+**/docker-compose.yml
+**/Makefile
