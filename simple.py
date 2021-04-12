@@ -17,7 +17,6 @@ SP500['daily_return'] = (SP500['sp500']/ SP500['sp500'].shift(1)) -1
 sp500_graph = JenkinsGraph(SP500['daily_return'], "sp500_daily_return")
 # sp500_graph.local_plot("Daily_return")
 sp500_graph.export_plot()
-print("GOT HERE")
 
 # SP500['daily_return'].to_csv(r'sp500_dail_return.csv', index = False)
 #Drop all Not a number values using drop method.
