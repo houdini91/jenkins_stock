@@ -18,10 +18,14 @@ class SingleStock:
     def dropna(self):
         self.df.dropna(inplace = True)
 
-    def dataReader(self, start_date):
+    def dataReader(self, start_date, end_date=None, data_source=None):
         start = start_date
-        end = datetime.datetime.now()
-        self.df = web.DataReader([self.name], 'fred', start, end)
+        if end_date == None:
+            end_date = datetime.datetime.now()
+        if data_source == None:
+            data_source = 'fred'
+
+        self.df = web.DataReader([self.name], data_source, start, end_date)
         self.dropna()
 
     def dailyReturn(self):
@@ -34,10 +38,10 @@ if __name__ == "__main__":
     stock.dailyReturn()
     stock.report()
 
-    stock = SingleStock('yahoo')  
-    stock.dataReader(start_date=datetime.datetime(2010, 1, 1))
-    stock.dailyReturn()
-    stock.report()
+    stock2 = SingleStock('VIXCLS')  
+    stock2.dataReader(start_date=datetime.datetime(2010, 1, 1))
+    stock2.dailyReturn()
+    stock2.report()
 
     # plt.show()
 # #if you get an error after executing the code, try adding below:
