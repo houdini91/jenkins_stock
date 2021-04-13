@@ -14,7 +14,7 @@ class JenkinsGraph:
         self.series.plot(title=title)
 
     def export_plot(self):
-        self.series.to_csv(self.graph_path, index = False)
+        self.series.to_csv(self.graph_path, index = True)
 
 
         
