@@ -6,6 +6,7 @@
 *.css.map
 *.egg-info
 *.sql.gz
+*.html
 .cache
 .project
 .idea

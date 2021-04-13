@@ -34,6 +34,11 @@ if __name__ == "__main__":
     stock.dailyReturn()
     stock.report()
 
+    stock = SingleStock('yahoo')  
+    stock.dataReader(start_date=datetime.datetime(2010, 1, 1))
+    stock.dailyReturn()
+    stock.report()
+
     # plt.show()
 # #if you get an error after executing the code, try adding below:
 # pd.core.common.is_list_like = pd.api.types.is_list_like
