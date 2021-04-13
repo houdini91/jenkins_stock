@@ -29,6 +29,7 @@ Dockerfile
 docker-compose.yml
  **/__pycache__
  **/*.pyc
+ **/*.html
  **/*.pyo
  **/node_modules
  node_modules
@@ -45,3 +46,4 @@ pylint.*
 **/ansible
 **/docker-compose.yml
 **/Makefile
+tmp
