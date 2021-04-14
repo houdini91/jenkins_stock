@@ -2,7 +2,7 @@ import os
 from pathlib import Path
 import pandas as pd
 
-class JenkinsGraph:
+class SeriesGraph:
     CSV_DIR = "tmp/csv"
     HTML_DIR = "tmp/html"
     CSV_EXT = ".csv"

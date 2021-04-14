@@ -1,6 +1,6 @@
 import pandas as pd
 import matplotlib.pyplot as plt
-from core import JenkinsGraph
+from trans_jenkins.core import SeriesGraph
 import pandas_datareader.data as web
 from pandas_datareader.nasdaq_trader import get_nasdaq_symbols
 import datetime
@@ -11,7 +11,7 @@ class SingleStock:
         self.name = name
 
     def report(self):
-        self.df_graph = JenkinsGraph(self.df['daily_return'], self.name + "_daily_return")
+        self.df_graph = SeriesGraph(self.df['daily_return'], self.name + "_daily_return")
         self.df_graph.export_csv()
         # self.df_graph.local_plot("Daily_return")
         self.df_graph.export_html()
@@ -41,11 +41,13 @@ NASDAQ_tickers = ['BA', 'IBM']
 if __name__ == "__main__":
 
     for ticker in NASDAQ_tickers:
+        print("Creating HTML report - closing graph:", ticker)
         f = web.DataReader(ticker, 'stooq')
-        graph = JenkinsGraph(f.Close, ticker + "_close")
+        graph = SeriesGraph(f.Close, ticker + "_close")
         graph.export_html()
 
     for ticker in FED_tickers:
+        print("Creating HTML report - daily return:", ticker)
         single = SingleStock(ticker)  
         single.dataReader(start=datetime.datetime(2010, 1, 1))
         single.dailyReturn()
