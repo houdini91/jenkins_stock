@@ -7,6 +7,7 @@
 *.egg-info
 *.sql.gz
 *.html
+*.csv
 .cache
 .project
 .idea
@@ -45,5 +46,4 @@ pylint.*
  **/Jenkinsfile
 **/ansible
 **/docker-compose.yml
-**/Makefile
 tmp

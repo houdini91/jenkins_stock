@@ -49,6 +49,13 @@ pipeline {
                         ])
             }
         }
+        stage('Build py_trans_jenkins') {
+            steps{
+                script {
+                     sh 'make build_python'
+                }
+            }
+        }
         stage('Build analysis image') {
             steps{
                 script {

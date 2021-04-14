@@ -17,20 +17,20 @@ help:
 	@echo "run - Run docker"
 	@echo "clean - Clean resources"
 
-build_image: build_python
+build_image:
 	@docker build . -t stock_analyzer
 
 build_python:
-	@python py_trans_jenkins/setup.py bdist_wheel
+	@python3 py_trans_jenkins/setup.py bdist_wheel
 
 develop_python: 
-	@python py_trans_jenkins/setup.py develop
+	@python3 py_trans_jenkins/setup.py develop
 
 install_python: 
-	@python py_trans_jenkins/setup.py install
+	@python3 py_trans_jenkins/setup.py install
 
 remove_python: 
-	@pip uninstall trans_jenkins
+	@pip3 uninstall trans_jenkins
 
 clean:
 	@rm -rf ${TOP_LEVEL}/tmp
