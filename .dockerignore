@@ -7,7 +7,6 @@
 *.egg-info
 *.sql.gz
 *.html
-*.whl
 *.csv
 .cache
 .project
@@ -21,9 +20,8 @@
 __pycache__
 docs
 env
-logs
-dist
 build
+logs
 src/resa/settings/local.py
 src/node_modules
 web/media
@@ -41,7 +39,6 @@ docker-compose.yml
 keys
 logs
 data
-build
 coverage.xml
  **/coverage.xml
 pylint.*

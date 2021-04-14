@@ -17,7 +17,7 @@ help:
 	@echo "run - Run docker"
 	@echo "clean - Clean resources"
 
-build_image:
+build_image: build_python
 	@docker build . -t stock_analyzer
 
 build_python:
