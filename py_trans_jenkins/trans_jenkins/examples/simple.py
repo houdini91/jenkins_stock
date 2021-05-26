@@ -53,6 +53,7 @@ class ExampleFilter():
 
 
 class PenisPipeline():
+    INSTALLER_STAGE="installer"
     COLLECTOR_STAGE="collector"
     FILTER_STAGE="filter"
     GENERATE_CMD="generate"
@@ -76,6 +77,7 @@ class PenisPipeline():
         self.output_pipeline = output.Output(base_dir="tmp/simple/")
         
         # Add stages to pipeline
+        self.add_install_depends_stage()
         self.add_collector_stage()
         self.add_filter_stage()
         self.add_generate()
@@ -85,6 +87,14 @@ class PenisPipeline():
         if args.func is not None:
             args.func(args)
 
+    def add_install_depends_stage(self):
+        # Trans-Jenkins pipeline template - only for testing, use the docker or python whl package to install trans-jenkins dependices.
+        self.template_pipeline.add_stage(self.INSTALLER_STAGE, self.COLLECTOR_STAGE, is_initial=True)
+        # self.template_pipeline.add_sh_step(self.INSTALLER_STAGE, "pip3 install -r requirements.txt" , label="install_depends")
+        self.template_pipeline.add_sh_step(self.INSTALLER_STAGE, "python3 py_trans_jenkins/setup.py install" , label="install_depends")
+
+
+
     def add_collector_stage(self):
         # Collector argparse arguments
         stage_parser = self.subparsers.add_parser(self.COLLECTOR_STAGE)
@@ -93,7 +103,7 @@ class PenisPipeline():
         stage_parser.set_defaults(func=self.collector)
 
         # Trans-Jenkins pipeline template
-        self.template_pipeline.add_stage(self.COLLECTOR_STAGE, self.FILTER_STAGE, is_initial=True)
+        self.template_pipeline.add_stage(self.COLLECTOR_STAGE, self.FILTER_STAGE, is_initial=False)
         self.template_pipeline.add_cred(self.COLLECTOR_STAGE,'string', self.FINHUB_TOKEN_ID_VAR,self.FINHUB_TOKEN_VAR)
         self.template_pipeline.add_text_param(pipeline.GLOBAL, self.SYMBOLS_VAR, self.DEFAULT_SYMBOLS)
         # self.template_pipeline.add_sh_step(self.COLLECTOR_STAGE, "python3 collector ${} $SYMBOL_LIST" , label="run_collector".format(self.FINHUB_TOKEN))
@@ -182,3 +192,6 @@ def run():
 
 if __name__ == "__main__":
     run()
+
+
+    asdgasdgasdg
