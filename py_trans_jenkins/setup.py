@@ -14,7 +14,7 @@ setup(
     version='0.0.1',
     description='Integration python library for transexual jenkins',
     package_dir={'':'py_trans_jenkins'},
-    packages=['trans_jenkins', 'trans_jenkins.examples'],
+    packages=['trans_jenkins', 'trans_jenkins.src', 'trans_jenkins.examples'],
     url='',
     python_requires=">=3.8.3",
     license='',
@@ -23,5 +23,7 @@ setup(
     install_requires=['pandas',
                     'pandas-datareader',
                     'matplotlib',
-                    'plotly']
+                    'plotly',
+                    'pandas-profiling',
+                    'sweetviz']
 )
