@@ -29,6 +29,13 @@ class BasePipeline:
         self.params = []
         self.add_stage(self.GLOBAL_MOCK_STAGE, None)
 
+
+# library identifier: 'scribe-shared-library@master', retriever: modernSCM(
+#      [$class       : 'GitSCMSource',
+#       remote       : 'https://github.com/Resilience-Cyber-Security/jenkins-shared-lib-scribe.git',
+#       credentialsId: 'GitHubRegistry'])
+
+
     def generate_header_block(self):
         header_block="""        
 def ListHtml() {

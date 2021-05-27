@@ -17,7 +17,7 @@ class TranPlot:
         self.name = name
 
     def get_plot_path(self, plot_name):
-        return os.path.join(self.out_dir, plot_name + self.PLOT_EXT)
+        return os.path.join(self.out_dir, self.name + "_" + plot_name + self.PLOT_EXT)
 
     def plot_series(self, plot_name, series):
         fig = series.plot.bar()
@@ -61,7 +61,7 @@ class TranCSV:
     def series_dict(self, series_dict):
         for series_name, series in series_dict.items():
             if not series.empty:
-                html_path = os.path.join(self.out_dir, series_name + self.CSV_EXT)
+                html_path = os.path.join(self.out_dir, self.name + "_" + series_name + self.CSV_EXT)
                 try:
                     os.remove(html_path)
                 except OSError:
@@ -89,8 +89,7 @@ class TranProfiler:
         pd.options.plotting.backend = "matplotlib"
         for series_name, series in series_dict.items():
             if not series.empty:
-                name = self.name + "_" + series_name 
-                html_path = os.path.join(self.out_dir, name + self.PROFILE_EXT)
+                html_path = os.path.join(self.out_dir, self.name + '_' + series_name + self.PROFILE_EXT)
                 try:
                     os.remove(html_path)
                 except OSError:
@@ -99,7 +98,7 @@ class TranProfiler:
                 if profiler_type == "sweetviz":
                     self.sweetviz_profiler(series, html_path, **kwargs)
                 else:
-                    self.pandas_profiler(series, name, html_path, **kwargs)
+                    self.pandas_profiler(series, series_name, html_path, **kwargs)
 
         pd.options.plotting.backend = "plotly" 
 

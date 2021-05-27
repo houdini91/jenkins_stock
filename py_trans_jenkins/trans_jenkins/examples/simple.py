@@ -143,9 +143,10 @@ class PenisPipeline():
         collector.to_csv(stage_outputter.get_output_dir(), "my_collector_csv_output")
 
         # Write stage csv, plots and profile reports
-        stage_outputter.csv_reporter().series_dict({"my_collector_csv_report": df})
-        stage_outputter.plot_reporter().plot_dict({"my_collector_plot_bundle_report":[bar_plot,line_plot], "my_collector_plot_report":[line_plot]})
-        stage_outputter.profile_reporter().series_dict({"my_collector_profiler_report": df}, profiler_type="sweetviz")
+        stage_outputter.csv_reporter().series_dict({"csv_report": df})
+        stage_outputter.plot_reporter().plot_dict({"plot_bundle_report":[bar_plot,line_plot], "plot_report":[line_plot]})
+        stage_outputter.profile_reporter().series_dict({"profiler_report_sweetviz": df}, profiler_type="sweetviz")
+        stage_outputter.profile_reporter().series_dict({"profiler_report_pandas": df})
 
     def filter(self, args):
         # Get stage output manager
@@ -192,6 +193,3 @@ def run():
 
 if __name__ == "__main__":
     run()
-
-
-    asdgasdgasdg
