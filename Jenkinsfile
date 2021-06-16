@@ -49,16 +49,10 @@ pipeline {
                         ])
             }
         }
-        stage('Build py_trans_jenkins') {
-            steps{
-                script {
-                     sh 'make build_python'
-                }
-            }
-        }
         stage('Build analysis image') {
             steps{
                 script {
+                    sh 'make build_python'
                     dockerImage = docker.build "houdini91/jenkins_stock/stock_analyzer"
                 }
             }
