@@ -25,6 +25,6 @@ setup(
                     'pandas-profiling',
                     'sweetviz',
                     'matplotlib',
-                    'pandas',]
+                    'pandas==1.2.5',]
 )
    
