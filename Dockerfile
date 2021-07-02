@@ -8,7 +8,10 @@ COPY requirements.txt /usr/src/stock/
 RUN pip install -r requirements.txt
 
 COPY dist /usr/src/stock/
+
+ENV PYTHONUNBUFFERED 1
 RUN pip install $(find . -name trans_jenkins-*.whl)
 
+COPY py_trans_jenkins/trans_jenkins/examples /usr/src/stock/examples
 
 # CMD ["python", "./simple.py"]

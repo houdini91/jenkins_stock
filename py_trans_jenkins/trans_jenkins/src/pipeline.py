@@ -29,35 +29,11 @@ class BasePipeline:
         self.params = []
         self.add_stage(self.GLOBAL_MOCK_STAGE, None)
 
-
-# library identifier: 'scribe-shared-library@master', retriever: modernSCM(
-#      [$class       : 'GitSCMSource',
-#       remote       : 'https://github.com/Resilience-Cyber-Security/jenkins-shared-lib-scribe.git',
-#       credentialsId: 'GitHubRegistry'])
-
-
     def generate_header_block(self):
         header_block="""        
-def ListHtml() {
-    return findFiles(glob: '**/html/*.html')
-}
-
-def PublishHtml() {
-    for (f in  ListHtml()) {
-        if (! f.directory) {
-            echo \"\"\"Publishing ${f.name} ${f.path} ${f.directory} ${f.length} ${f.lastModified}\"\"\"
-            REPORT_DIR = sh(script: 'dirname ' + f.path, returnStdout: true)
-            REPORT_NAME = sh(script: 'basename ' + f.path + ' .html', returnStdout: true)
-            publishHTML (target : [allowMissing: false,
-                alwaysLinkToLastBuild: true,
-                keepAll: true,
-                reportDir: REPORT_DIR,
-                reportFiles: f.name,
-                reportName: REPORT_NAME,
-                reportTitles: REPORT_NAME])
-        }
-    }
-}
+library identifier: 'trasn-JSL@main', retriever: modernSCM(
+     [$class       : 'GitSCMSource',
+      remote       : 'https://github.com/houdini91/trans_JSL.git'])
 """
         return header_block
 
@@ -219,8 +195,9 @@ def PublishHtml() {
 
         list_obj = []
         for step in self.stages[stage_name]["step"]:
-            if step["type"] == "sh":
-                sh_step_format = """sh(script: {script}, std)"""
+            if step["type"] == "sh" or \
+                step["type"] == "InVirtualEnv" or \
+                step["type"] == "CreateVirtualEnv":
                 obj = self.generate_func(step["type"], step["args"])
                 list_obj.append(obj)
 
@@ -320,6 +297,16 @@ def PublishHtml() {
     def add_sh_step(self, stage_name, sh_cmd, label=None, returnStdout=None):
         d = {"script": sh_cmd, "label":label, "returnStdout":returnStdout}
         self.add_base_step(stage_name, "sh", d)
+
+    def add_virtual_env_step(self, stage_name, name="venv", command="python --version"):
+        d = {"name":name , "command": command}
+        self.add_base_step(stage_name, "InVirtualEnv", d)
+        print(self.stages[stage_name]["step"])
+
+    def add_create_virtual_env_step(self, stage_name, name="venv"):
+        d = {"name":name}
+        self.add_base_step(stage_name, "CreateVirtualEnv", d)
+        print(self.stages[stage_name]["step"])
 
     def add_base_step(self, stage_name, step_type, step_args):
         if not stage_name in self.stages:

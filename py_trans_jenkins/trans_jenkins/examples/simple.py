@@ -1,4 +1,6 @@
+# from trans_jenkins.src import pipeline, output
 from ..src import pipeline, output
+
 
 import os
 import sys
@@ -91,7 +93,9 @@ class PenisPipeline():
         # Trans-Jenkins pipeline template - only for testing, use the docker or python whl package to install trans-jenkins dependices.
         self.template_pipeline.add_stage(self.INSTALLER_STAGE, self.COLLECTOR_STAGE, is_initial=True)
         # self.template_pipeline.add_sh_step(self.INSTALLER_STAGE, "pip3 install -r requirements.txt" , label="install_depends")
-        self.template_pipeline.add_sh_step(self.INSTALLER_STAGE, "python3 py_trans_jenkins/setup.py install" , label="install_depends")
+        self.template_pipeline.add_create_virtual_env_step(self.INSTALLER_STAGE)
+        self.template_pipeline.add_virtual_env_step(self.INSTALLER_STAGE, command="python py_trans_jenkins/setup.py install")
+        # self.template_pipeline.add_sh_step(self.INSTALLER_STAGE, "python3 py_trans_jenkins/setup.py install" , label="install_depends")
 
 
 
@@ -107,7 +111,8 @@ class PenisPipeline():
         self.template_pipeline.add_cred(self.COLLECTOR_STAGE,'string', self.FINHUB_TOKEN_ID_VAR,self.FINHUB_TOKEN_VAR)
         self.template_pipeline.add_text_param(pipeline.GLOBAL, self.SYMBOLS_VAR, self.DEFAULT_SYMBOLS)
         # self.template_pipeline.add_sh_step(self.COLLECTOR_STAGE, "python3 collector ${} $SYMBOL_LIST" , label="run_collector".format(self.FINHUB_TOKEN))
-        self.template_pipeline.add_sh_step(self.COLLECTOR_STAGE, "echo Running Collector WITH ${};printenv".format(self.FINHUB_TOKEN_VAR) , label="run_collector")
+        self.template_pipeline.add_virtual_env_step(self.COLLECTOR_STAGE, command="python -m 'py_trans_jenkins.trans_jenkins.examples.simple' collector --token $FINHUB_TOKEN")
+        # self.template_pipeline.add_sh_step(self.COLLECTOR_STAGE, "echo Running Collector WITH ${};printenv".format(self.FINHUB_TOKEN_VAR) , label="run_collector")
 
     def add_filter_stage(self):
         # Filter argparse arguments
@@ -120,7 +125,8 @@ class PenisPipeline():
         self.template_pipeline.add_string_param(pipeline.GLOBAL, self.FILTER_DICT_VAR, json.dumps(self.DEFAULT_FILTER_DICT))
 
         # self.template_pipeline.add_sh_step(self.FILTER_STAGE, "python3 filter" , label="run_filter")
-        self.template_pipeline.add_sh_step(self.FILTER_STAGE, "echo RUNNING FILTER STAGE;printenv" , label="run_filter")
+        self.template_pipeline.add_virtual_env_step(self.FILTER_STAGE, command="python -m 'py_trans_jenkins.trans_jenkins.examples.simple' filter --filter_dict '${params.FILTER_DICT}'")
+        # self.template_pipeline.add_sh_step(self.FILTER_STAGE, "echo RUNNING FILTER STAGE;printenv" , label="run_filter")
 
     def add_generate(self):
         # Generate argparse arguments
