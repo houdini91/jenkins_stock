@@ -1,0 +1,47 @@
+        
+library identifier: 'trasn-JSL@main', retriever: modernSCM(
+     [$class       : 'GitSCMSource',
+      remote       : 'https://github.com/houdini91/trans_JSL.git'])
+
+pipeline {
+	agent any
+	parameters {
+		text(name:'SYMBOLS_LIST', defaultValue:'{"symbols"=[]}')
+		string(name:'FILTER_DICT', defaultValue:'{"min_price": 0, "max_price": 100000}')
+	}
+	stages {
+		stage('installer') {
+			steps {
+				CreateVirtualEnv('venv')
+				InVirtualEnv('venv', 'python py_trans_jenkins/setup.py install')
+			}
+			post {
+				always 	{
+						PublishHTML()
+				}
+			}
+		}
+		stage('collector') {
+			steps {
+				withCredentials([string(credentialsId:'FINHUB_TOKEN_ID', variable:'FINHUB_TOKEN')]){
+					InVirtualEnv('venv', 'python -m py_trans_jenkins.trans_jenkins.examples.simple collector --token $FINHUB_TOKEN')
+				}
+			}
+			post {
+				always 	{
+						PublishHTML()
+				}
+			}
+		}
+		stage('filter') {
+			steps {
+				InVirtualEnv('venv', 'python -m py_trans_jenkins.trans_jenkins.examples.simple filter --filter_dict $params.FILTER_DICT')
+			}
+			post {
+				always 	{
+						PublishHTML()
+				}
+			}
+		}
+	}
+}
