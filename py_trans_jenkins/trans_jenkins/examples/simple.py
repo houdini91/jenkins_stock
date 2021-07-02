@@ -1,5 +1,5 @@
-# from trans_jenkins.src import pipeline, output
-from ..src import pipeline, output
+from trans_jenkins.src import pipeline, output
+# from ..src import pipeline, output
 
 
 import os
