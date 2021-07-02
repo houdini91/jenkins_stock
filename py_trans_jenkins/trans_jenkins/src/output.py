@@ -79,11 +79,11 @@ class TranProfiler:
         self.name = name
         self.html_path = os.path.join(out_dir, name + self.PROFILE_EXT)
 
-    def series(self, series, profiler_type="pandas"):
-        pd.options.plotting.backend = "matplotlib"
-        if profiler_type == "pandas":
-            self.pandas_profiler(series, name, html_path)
-        pd.options.plotting.backend = "plotly" 
+    # def series(self, series, profiler_type="pandas"):
+    #     pd.options.plotting.backend = "matplotlib"
+    #     if profiler_type == "pandas":
+    #         self.pandas_profiler(series, name, html_path)
+    #     pd.options.plotting.backend = "plotly" 
 
     def series_dict(self, series_dict, profiler_type="pandas", **kwargs):
         pd.options.plotting.backend = "matplotlib"
@@ -103,12 +103,10 @@ class TranProfiler:
         pd.options.plotting.backend = "plotly" 
 
     def pandas_profiler(self, series, name, html_path, **kwargs):
-            print("ARGS", kwargs)
             profile = ProfileReport(series, title= name + ":Profiler", progress_bar=True)
             profile.to_file(html_path)
 
     def sweetviz_profiler(self, series, html_path, **kwargs):
-        print("ARGS", kwargs)
         profile = sv.analyze(series, *kwargs)
         profile.show_html(filepath=html_path, open_browser=False)
     
