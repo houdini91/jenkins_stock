@@ -20,10 +20,11 @@ setup(
     license='',
     author='mikey strauss',
     author_email='mdstrauss91@gmail.com',
-    install_requires=['pandas',
-                    'pandas-datareader',
-                    'matplotlib',
+    install_requires=['pandas-datareader',
                     'plotly',
                     'pandas-profiling',
-                    'sweetviz']
+                    'sweetviz',
+                    'matplotlib',
+                    'pandas',]
 )
+   

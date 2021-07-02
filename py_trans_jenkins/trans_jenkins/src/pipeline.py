@@ -4,6 +4,14 @@ import textwrap
 
 GLOBAL="global"
 
+LIBRARY_BLOCK = """        
+library identifier: 'trasn-JSL@main', retriever: modernSCM(
+     [$class       : 'GitSCMSource',
+      remote       : 'https://github.com/houdini91/trans_JSL.git'])
+"""
+POST_STEP = """PublishHTML()"""
+
+
 class Trans_error(Exception):
     def __init(self, *args):
         self.args = args
@@ -30,12 +38,7 @@ class BasePipeline:
         self.add_stage(self.GLOBAL_MOCK_STAGE, None)
 
     def generate_header_block(self):
-        header_block="""        
-library identifier: 'trasn-JSL@main', retriever: modernSCM(
-     [$class       : 'GitSCMSource',
-      remote       : 'https://github.com/houdini91/trans_JSL.git'])
-"""
-        return header_block
+        return LIBRARY_BLOCK
 
     def generate_jenkinsfile(self):
         pipeline_format = """{header_block}\npipeline {{\n\tagent any\n{env_param_block}\n{stages_block}\n}}"""
@@ -97,6 +100,11 @@ library identifier: 'trasn-JSL@main', retriever: modernSCM(
         step_block_format = """steps {{\n{step_str}\n}}"""
         return step_block_format.format(step_str=step_str)
 
+    def generate_post_steps_block(self, post_step_str):
+        post_step_str = textwrap.indent(post_step_str, "\t")
+        post_step_block_format = """post {{\n\talways \t{{\n\t\t{post_step_str}\n\t}}\n}}"""
+        return post_step_block_format.format(post_step_str=post_step_str)
+
     def generate_with_cred_block(self, stage_name, step_str):
         step_str = textwrap.indent(step_str, "\t")
         cred_list = self.generate_cred_list(stage_name)
@@ -116,7 +124,7 @@ library identifier: 'trasn-JSL@main', retriever: modernSCM(
             if not stage_name in self.stages or stage_name == self.GLOBAL_MOCK_STAGE:
                 raise Unknown_stage(stage_name)
 
-            stage_format = """stage('{stage_name}') {{\n{env_block}\n{steps_block}\n}}"""
+            stage_format = """stage('{stage_name}') {{\n{env_block}\n{steps_block}\n{post_steps_block}\n}}"""
             stage = self.stages[stage_name]
             
             env_block = self.generate_env_param_block(stage_name)
@@ -126,7 +134,7 @@ library identifier: 'trasn-JSL@main', retriever: modernSCM(
             env_block = self.generate_env_block(env_str)
 
             if len(env_list) == 0:
-                stage_format = """stage('{stage_name}') {{\n{steps_block}\n}}"""
+                stage_format = """stage('{stage_name}') {{\n{steps_block}\n{post_steps_block}\n}}"""
 
 
             step_list = self.generate_step_list(stage_name)
@@ -135,11 +143,13 @@ library identifier: 'trasn-JSL@main', retriever: modernSCM(
                 step_str = self.generate_with_cred_block(stage_name, step_str)
 
             steps_block = self.generate_steps_block(step_str)
+            post_steps_block = self.generate_post_steps_block(POST_STEP)
             
             env_block = textwrap.indent(env_block, "\t")
             steps_block = textwrap.indent(steps_block, "\t")
+            post_steps_block = textwrap.indent(post_steps_block, "\t")
 
-            obj = stage_format.format(stage_name=stage_name, env_block=env_block, steps_block=steps_block)
+            obj = stage_format.format(stage_name=stage_name, env_block=env_block, steps_block=steps_block, post_steps_block=post_steps_block)
             list_obj.append(obj)
             next_stage = stage["next_stage"]
 
@@ -151,14 +161,14 @@ library identifier: 'trasn-JSL@main', retriever: modernSCM(
 
         list_obj = []
         for param in self.stages[stage_name]["params"]:
-            obj = self.generate_func(param["type"], param["params"])
+            obj = self.generate_func(param["type"], param["params"], True)
             list_obj.append(obj)
 
         return list_obj
 
-    def generate_func(self, func_name, func_args):
+    def generate_func(self, func_name, func_args, named, delimiter=":"):
         func_format = """{func_name}({func_str})"""
-        func_str = self.generate_argument_str(func_args)
+        func_str = self.generate_argument_str(func_args, named, delimiter)
         return func_format.format(func_name=func_name, func_str=func_str)
 
     def generate_cred_list(self, stage_name):
@@ -172,7 +182,7 @@ library identifier: 'trasn-JSL@main', retriever: modernSCM(
                 obj = cred_format.format(credentialsId=cred["credentialsId"], variable=cred["variable"])
                 list_obj.append(obj)
             else:
-                obj = self.generate_func(cred["cred_type"], {"credentialsId": cred["credentialsId"],"variable": cred["variable"]})
+                obj = self.generate_func(cred["cred_type"], {"credentialsId": cred["credentialsId"],"variable": cred["variable"]}, True)
                 list_obj.append(obj)
                  
         return list_obj
@@ -195,15 +205,18 @@ library identifier: 'trasn-JSL@main', retriever: modernSCM(
 
         list_obj = []
         for step in self.stages[stage_name]["step"]:
-            if step["type"] == "sh" or \
-                step["type"] == "InVirtualEnv" or \
+            if step["type"] == "sh":
+                obj = self.generate_func(step["type"], step["args"], True)
+            if  step["type"] == "InVirtualEnv" or \
                 step["type"] == "CreateVirtualEnv":
-                obj = self.generate_func(step["type"], step["args"])
+                obj = self.generate_func(step["type"], step["args"], False)
+
+
                 list_obj.append(obj)
 
         return list_obj
 
-    def generate_argument_str(self, field_dict):
+    def generate_argument_str(self, field_dict, named, delimiter):
         res = ""
         for index, key in enumerate(field_dict):
             value = field_dict[key]
@@ -218,7 +231,11 @@ library identifier: 'trasn-JSL@main', retriever: modernSCM(
             else:
                 value_format = "{value}"
 
-            key_value_format = "{key}: " + value_format
+            if named:
+                key_value_format = "{key}" + delimiter+ value_format
+            else:
+                key_value_format = value_format
+
             res += key_value_format.format(key=key, value=field_dict[key])
         return res
 
@@ -301,12 +318,10 @@ library identifier: 'trasn-JSL@main', retriever: modernSCM(
     def add_virtual_env_step(self, stage_name, name="venv", command="python --version"):
         d = {"name":name , "command": command}
         self.add_base_step(stage_name, "InVirtualEnv", d)
-        print(self.stages[stage_name]["step"])
 
     def add_create_virtual_env_step(self, stage_name, name="venv"):
         d = {"name":name}
         self.add_base_step(stage_name, "CreateVirtualEnv", d)
-        print(self.stages[stage_name]["step"])
 
     def add_base_step(self, stage_name, step_type, step_args):
         if not stage_name in self.stages:
